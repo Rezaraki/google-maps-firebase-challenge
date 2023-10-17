@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import { Box, Button, TextField } from '@mui/material'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as yup from 'yup'
+import { AddressSelect } from './AddressSelect'
 
 export const AddressFormContainer = styled(Box)(
   {
@@ -70,8 +71,8 @@ export const AddressForm = ({
       >
         {(formikValues) => (
           <Form>
-            <Field
-              as={TextField}
+            {/* <Field
+              as={AddressSelect}
               label="address"
               type="text"
               name="address"
@@ -82,7 +83,8 @@ export const AddressForm = ({
               error={
                 formikValues.errors.address && formikValues.touched.address
               }
-            />
+            /> */}
+            <AddressSelect />
             <Field
               as={TextField}
               label="More Details"
