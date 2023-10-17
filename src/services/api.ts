@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import ky from 'ky'
 
-import type { DocsList } from './types'
+import { TDocsList } from '../types'
 
 export const api = createApi({
   baseQuery: fetchBaseQuery({
@@ -9,7 +9,7 @@ export const api = createApi({
     fetchFn: async (...args) => ky(...args),
   }),
   endpoints: (builder) => ({
-    getDocsList: builder.query<DocsList, void>({
+    getDocsList: builder.query<TDocsList, void>({
       query: () => `/docs_list`,
     }),
   }),

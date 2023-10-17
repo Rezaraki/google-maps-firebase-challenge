@@ -1,9 +1,15 @@
-import { Provider as ReduxStoreProvider } from 'react-redux'
-
-import { store } from './store'
+import { AddressForm } from './compoments/AddressForm'
+import { AppContainer } from './css/AppContainer'
 
 const App = () => {
-  return <ReduxStoreProvider store={store}>app</ReduxStoreProvider>
+  return (
+    <AppContainer>
+      <aside>
+        <AddressForm addressType="origin" />
+      </aside>
+      <article className="map-container"></article>
+    </AppContainer>
+  )
 }
 
 export default App
