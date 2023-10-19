@@ -16,13 +16,12 @@ export const AddressSelect = ({
   const dispatch = useAppDispatch()
 
   const onPlaceSelect = async (newValue: { label: string; value: unknown }) => {
-    helpers.setValue({ ...field.value, text: newValue.label })
+    helpers.setValue(newValue.label)
 
     try {
       const results = await geocodeByAddress(newValue.label)
       const { lat, lng } = await getLatLng(results[0])
 
-      helpers.setValue({ ...field.value, text: newValue.label, lat, lng })
       //update only lat ond lng
       const data = { lat, lng }
       dispatch(
@@ -42,7 +41,7 @@ export const AddressSelect = ({
       <GooglePlacesAutocomplete
         minLengthAutocomplete={2}
         selectProps={{
-          value: field.value.text,
+          value: field.value,
           onChange: onPlaceSelect,
         }}
       />

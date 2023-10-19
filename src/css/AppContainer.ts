@@ -16,6 +16,7 @@ export const AppContainer = styled.main(
       width: '30%',
       padding: 16,
       background: '#f5f5f5',
+      overflowY: 'auto',
     },
   },
   { label: 'app-container' },

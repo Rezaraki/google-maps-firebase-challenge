@@ -42,9 +42,9 @@ export const AddressForm = ({
 }: {
   addressType: 'origin' | 'destination'
 }) => {
-  const initialValue: IAddressForm = {
+  const initialValue = {
     name: '',
-    address: { text: '', lat: null, lng: null },
+    address: '',
     moreDetails: '',
     phoneNumber: '',
   }

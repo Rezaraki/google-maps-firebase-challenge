@@ -7,6 +7,7 @@ const App = () => {
     <AppContainer>
       <aside>
         <AddressForm addressType="origin" />
+        <AddressForm addressType="destination" />
       </aside>
       <article className="map-container">
         <Map />
