@@ -1,35 +1,51 @@
-import TextField from '@mui/material/TextField'
-import Autocomplete from '@mui/material/Autocomplete'
-import { ErrorMessage, useField } from 'formik'
-import { useState } from 'react'
+import { useField } from 'formik'
+import GooglePlacesAutocomplete, {
+  geocodeByAddress,
+  getLatLng,
+} from 'react-google-places-autocomplete'
 
-const options = ['Option 1', 'Option 2', '']
+import { useAppDispatch } from '../hooks/redux'
+import { updateLatLng } from '../services/appSlice'
 
-export const AddressSelect = () => {
-  const [field, meta, helpers] = useField('address')
-  //   const [value, setValue] = useState<string | null>(options[0])
-  const [inputValue, setInputValue] = useState('')
+export const AddressSelect = ({
+  addressType,
+}: {
+  addressType: 'origin' | 'destination'
+}) => {
+  const { 0: field, 2: helpers } = useField('address')
+  const dispatch = useAppDispatch()
+
+  const onPlaceSelect = async (newValue: { label: string; value: unknown }) => {
+    helpers.setValue({ ...field.value, text: newValue.label })
+
+    try {
+      const results = await geocodeByAddress(newValue.label)
+      const { lat, lng } = await getLatLng(results[0])
+
+      helpers.setValue({ ...field.value, text: newValue.label, lat, lng })
+      //update only lat ond lng
+      const data = { lat, lng }
+      dispatch(
+        updateLatLng({
+          type: addressType,
+          data,
+        }),
+      )
+    } catch (error) {
+      console.error(error)
+    } finally {
+    }
+  }
 
   return (
     <>
-      <Autocomplete
-        disablePortal
-        id="address"
-        value={field.value}
-        onChange={(event: any, newValue: string | null) => {
-          helpers.setTouched(true)
-          helpers.setValue(newValue)
+      <GooglePlacesAutocomplete
+        minLengthAutocomplete={2}
+        selectProps={{
+          value: field.value.text,
+          onChange: onPlaceSelect,
         }}
-        inputValue={inputValue}
-        onInputChange={(event, newInputValue) => {
-          helpers.setTouched(true)
-          setInputValue(newInputValue)
-        }}
-        options={options}
-        renderInput={(params) => <TextField {...params} label="Address" />}
       />
-
-      {meta.touched && meta.error}
     </>
   )
 }

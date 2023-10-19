@@ -3,6 +3,8 @@ import { Box, Button, TextField } from '@mui/material'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
 import * as yup from 'yup'
 import { AddressSelect } from './AddressSelect'
+import { useAppSelector } from '../hooks/redux'
+import { IAddressForm } from '../types'
 
 export const AddressFormContainer = styled(Box)(
   {
@@ -40,9 +42,9 @@ export const AddressForm = ({
 }: {
   addressType: 'origin' | 'destination'
 }) => {
-  const initialValue = {
+  const initialValue: IAddressForm = {
     name: '',
-    address: '',
+    address: { text: '', lat: null, lng: null },
     moreDetails: '',
     phoneNumber: '',
   }
@@ -58,7 +60,7 @@ export const AddressForm = ({
       .matches(/^0[0-9]{9}$/, '10 Digits (Starting with 0)')
       .required('Phone number is required'),
   })
-
+  const { mapScriptLoaded } = useAppSelector((state) => state.app)
   return (
     <AddressFormContainer>
       <h2>{addressType}</h2>
@@ -71,20 +73,19 @@ export const AddressForm = ({
       >
         {(formikValues) => (
           <Form>
-            {/* <Field
-              as={AddressSelect}
-              label="address"
-              type="text"
-              name="address"
-              fullWidth
-              variant="outlined"
-              margin="dense"
-              helperText={<ErrorMessage name="address" />}
-              error={
-                formikValues.errors.address && formikValues.touched.address
-              }
-            /> */}
-            <AddressSelect />
+            {mapScriptLoaded ? (
+              <AddressSelect addressType={addressType} />
+            ) : (
+              <TextField
+                label="Address"
+                disabled
+                type="text"
+                name="address"
+                fullWidth
+                variant="outlined"
+                margin="dense"
+              />
+            )}
             <Field
               as={TextField}
               label="More Details"
@@ -126,7 +127,7 @@ export const AddressForm = ({
               />
             </div>
             <div className="btns-container">
-              <Button variant="outlined">Choose From Favourites</Button>
+              <Button variant="outlined">Favourites</Button>
               <Button
                 variant="outlined"
                 type="submit"

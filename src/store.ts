@@ -9,7 +9,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat([api.middleware]),
   reducer: combineReducers({
-    counter: appReducer,
+    app: appReducer,
     [api.reducerPath]: api.reducer,
   }),
 })
