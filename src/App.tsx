@@ -1,5 +1,6 @@
 import { AddressForm } from './compoments/AddressForm'
 import Map from './compoments/Map'
+import { ParcelForm } from './compoments/ParcelForm'
 import { AppContainer } from './css/AppContainer'
 
 const App = () => {
@@ -8,6 +9,7 @@ const App = () => {
       <aside>
         <AddressForm addressType="origin" />
         <AddressForm addressType="destination" />
+        <ParcelForm />
       </aside>
       <article className="map-container">
         <Map />
