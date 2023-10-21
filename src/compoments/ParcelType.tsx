@@ -1,6 +1,8 @@
+/* eslint-disable sort-keys-custom-order/type-keys */
+/* eslint-disable sort-keys-custom-order/object-keys */
 import { Button } from '@mui/material'
 import { collection, getDocs } from 'firebase/firestore'
-
+import { getFunctions, httpsCallable } from 'firebase/functions'
 import { useAppDispatch, useAppSelector } from '../hooks/redux'
 
 import {
@@ -12,15 +14,16 @@ import {
 
 import { useEffect, useState } from 'react'
 
-import { ParcelFormContainer } from '../css/ParcelFormContainer'
+import { ParcelTypeContainer } from '../css/ParcelTypeContainer'
 import { db } from '../services/firebase'
-import { IParcel } from '../types'
+import { IParcel, TPricingData } from '../types'
 
-import { selectParcel } from '../services/appSlice'
+import { selectParcel, updatePricingData } from '../services/appSlice'
 
-export const ParcelForm = () => {
+export const ParcelType = () => {
   const [parcels, setParcels] = useState<IParcel[] | null>(null)
-  const { selectedParcel } = useAppSelector((state) => state.app)
+  const { selectedParcel, originFormData, destinationFormData } =
+    useAppSelector((state) => state.app)
   const dispatch = useAppDispatch()
   async function getImageurlPromise(
     storage: FirebaseStorage,
@@ -81,8 +84,41 @@ export const ParcelForm = () => {
     const newSelectedParcel = parcels?.find((parcel) => parcel.id === id)
     if (newSelectedParcel) dispatch(selectParcel(newSelectedParcel))
   }
+
+  async function handleConfirmClick() {
+    const functions = getFunctions()
+    const pricingFunction = httpsCallable(functions, 'pricing')
+
+    const {
+      id,
+      parcel_img_url,
+      firebase_fetched_img_url,
+      ...neededParcelData
+    } = selectedParcel ?? {}
+
+    const pricingBodyData = {
+      origin: {
+        lat: originFormData.address.lat,
+        lng: originFormData.address.lng,
+      },
+      destination: {
+        lat: destinationFormData.address.lat,
+        lng: destinationFormData.address.lng,
+      },
+      ...neededParcelData,
+    }
+    try {
+      const result = await pricingFunction(pricingBodyData)
+
+      const data = result.data
+      dispatch(updatePricingData(data as TPricingData))
+    } catch (error) {
+      console.error(`Error calling pricing function: ${error}`)
+    }
+  }
   return (
-    <ParcelFormContainer>
+    <ParcelTypeContainer>
+      <h2>Parcel Type</h2>
       <div className="parcels-container">
         {parcels?.map((parcel) => (
           <article
@@ -113,10 +149,15 @@ export const ParcelForm = () => {
         ))}
       </div>
       <div className="btn-container">
-        <Button variant="outlined" type="submit" disabled={!selectedParcel}>
+        <Button
+          variant="outlined"
+          type="submit"
+          disabled={!selectedParcel}
+          onClick={handleConfirmClick}
+        >
           Confirm
         </Button>
       </div>
-    </ParcelFormContainer>
+    </ParcelTypeContainer>
   )
 }

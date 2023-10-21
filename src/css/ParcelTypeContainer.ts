@@ -1,11 +1,14 @@
 import styled from '@emotion/styled'
 import { Box } from '@mui/material'
 
-export const ParcelFormContainer = styled(Box)(
+export const ParcelTypeContainer = styled(Box)(
   {
     padding: 20,
     background: '#fff',
     h2: { margin: '8px 0' },
+    '.parcels-container': {
+      background: '#f5f5f5',
+    },
     '.parcel': {
       padding: '8px 12px',
       borderBottom: '1px solid black',
@@ -46,9 +49,7 @@ export const ParcelFormContainer = styled(Box)(
       alignItems: 'center',
       gap: 10,
     },
-    '.parcels-container': {
-      background: '#f5f5f5',
-    },
+
     '.btn-container': {
       marginTop: 16,
       display: 'flex',
@@ -56,5 +57,5 @@ export const ParcelFormContainer = styled(Box)(
       button: { width: '50%' },
     },
   },
-  { label: 'parcel-form-container' },
+  { label: 'parcel-type-container' },
 )
