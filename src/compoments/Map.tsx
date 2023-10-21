@@ -10,9 +10,9 @@ import {
 } from '@react-google-maps/api'
 
 import { useEffect, useMemo, useRef } from 'react'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../services/hooks/redux'
 import { updateMapScriptStatus } from '../services/appSlice'
-import { getMiddlePosition } from '../utils/getMiddlePosition'
+import { getMiddlePosition } from '../services/getMiddlePosition'
 import { NonNullableFields } from '../types'
 import { MapContainer } from '../css/MapContainer'
 import Spinner from './Spinner'
@@ -100,6 +100,7 @@ export default function Map() {
       mapRef.current.fitBounds(bounds)
     }
   }, [originlat, deslat])
+
   return (
     <MapContainer>
       {!isLoaded ? (

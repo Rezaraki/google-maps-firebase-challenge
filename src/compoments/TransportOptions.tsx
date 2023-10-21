@@ -1,8 +1,6 @@
-/* eslint-disable sort-keys-custom-order/type-keys */
-/* eslint-disable sort-keys-custom-order/object-keys */
 import { Button } from '@mui/material'
 import { TransportOptionsContainer } from '../css/TransportOptionsContainer'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
+import { useAppDispatch, useAppSelector } from '../services/hooks/redux'
 import drivingimg from '../assets/imgs/motor.png'
 import cyclingimg from '../assets/imgs/bike.png'
 import walkingimg from '../assets/imgs/walk.png'

@@ -1,10 +1,10 @@
-import { useField } from 'formik'
+import { useField, useFormikContext } from 'formik'
 import GooglePlacesAutocomplete, {
   geocodeByAddress,
   getLatLng,
 } from 'react-google-places-autocomplete'
 
-import { useAppDispatch } from '../hooks/redux'
+import { useAppDispatch } from '../services/hooks/redux'
 import { updateLatLng } from '../services/appSlice'
 
 export const AddressSelect = ({
@@ -13,11 +13,12 @@ export const AddressSelect = ({
   addressType: 'origin' | 'destination'
 }) => {
   const { 0: field, 2: helpers } = useField('address')
+  const { values, submitForm } = useFormikContext()
+
   const dispatch = useAppDispatch()
 
   const onPlaceSelect = async (newValue: { label: string; value: unknown }) => {
     helpers.setValue(newValue.label)
-
     try {
       const results = await geocodeByAddress(newValue.label)
       const { lat, lng } = await getLatLng(results[0])
@@ -32,7 +33,6 @@ export const AddressSelect = ({
       )
     } catch (error) {
       console.error(error)
-    } finally {
     }
   }
 
@@ -40,8 +40,8 @@ export const AddressSelect = ({
     <>
       <GooglePlacesAutocomplete
         minLengthAutocomplete={2}
+        apiOptions={{ region: 'au', language: 'en' }}
         selectProps={{
-          value: field.value,
           onChange: onPlaceSelect,
         }}
       />

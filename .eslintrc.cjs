@@ -11,6 +11,8 @@ module.exports = {
   plugins: ['react-hooks', 'jsx-a11y'],
   rules: {
     'react-hooks/rules-of-hooks': 'error',
+    "sort-keys-custom-order/type-keys": "off",
+    "sort-keys-custom-order/object-keys": "off"
   },
   settings: {},
   overrides: [],

@@ -1,23 +1,17 @@
-/* eslint-disable sort-keys-custom-order/type-keys */
-/* eslint-disable sort-keys-custom-order/object-keys */
 import { Button } from '@mui/material'
 import { collection, getDocs } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
-import { useAppDispatch, useAppSelector } from '../hooks/redux'
-
+import { useAppDispatch, useAppSelector } from '../services/hooks/redux'
 import {
   getStorage,
   ref,
   getDownloadURL,
   FirebaseStorage,
 } from 'firebase/storage'
-
 import { useEffect, useState } from 'react'
-
 import { ParcelTypeContainer } from '../css/ParcelTypeContainer'
 import { db } from '../services/firebase'
 import { IParcel, TPricingData } from '../types'
-
 import { selectParcel, updatePricingData } from '../services/appSlice'
 
 export const ParcelType = () => {
@@ -47,7 +41,6 @@ export const ParcelType = () => {
     parcels: IParcel[],
     updateParcelFunc: (value: IParcel[] | null) => void,
   ) {
-    console.log(getParcelsImgUrls(parcels))
     try {
       const pracelImgsArr = await getParcelsImgUrls(parcels)
 
@@ -60,7 +53,7 @@ export const ParcelType = () => {
       })
       updateParcelFunc(imgUpdatedParcels)
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 
@@ -135,7 +128,6 @@ export const ParcelType = () => {
                     alt={parcel.parcel_type}
                   />
                 </div>
-
                 <h3>{parcel.parcel_type}</h3>
               </div>
 

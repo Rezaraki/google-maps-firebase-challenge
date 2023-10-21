@@ -3,7 +3,7 @@ import { Formik, Field, Form, ErrorMessage } from 'formik'
 
 import * as yup from 'yup'
 
-import { useAppSelector } from '../hooks/redux'
+import { useAppSelector } from '../services/hooks/redux'
 import { AddressSelect } from './AddressSelect'
 import { AddressFormContainer } from '../css/AddressFormContainer'
 
@@ -31,14 +31,15 @@ export const AddressForm = ({
       .required('Phone number is required'),
   })
   const { mapScriptLoaded } = useAppSelector((state) => state.app)
+
   return (
     <AddressFormContainer>
       <h2>{addressType}</h2>
       <Formik
         initialValues={initialValue}
         validationSchema={validationSchema}
-        onSubmit={(values) => {
-          console.log('values', values)
+        onSubmit={() => {
+          // submit form
         }}
       >
         {(formikValues) => (

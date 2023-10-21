@@ -17,6 +17,7 @@ export const AppContainer = styled.main(
       padding: 16,
       background: '#f5f5f5',
       overflowY: 'auto',
+      '&>.MuiBox-root': { marginBottom: 12 },
     },
   },
   { label: 'app-container' },
