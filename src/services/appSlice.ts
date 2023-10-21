@@ -1,11 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { IAddressForm, TAddressType } from '../types'
+import { IAddressForm, IParcel, TAddressType } from '../types'
 
 export interface CounterState {
   mapScriptLoaded: boolean
   originFormData: IAddressForm
   destinationFormData: IAddressForm
+  selectedParcel: IParcel | null
 }
 
 const initialState: CounterState = {
@@ -30,6 +31,7 @@ const initialState: CounterState = {
     moreDetails: '',
     phoneNumber: '',
   },
+  selectedParcel: null,
 }
 
 export const appSlice = createSlice({
@@ -64,17 +66,18 @@ export const appSlice = createSlice({
         state.destinationFormData.address.lng = action.payload.data.lng
       }
     },
-    // increment: (state) => {
-    //   state.value += 1
-    // },
-    // incrementByAmount: (state, action: PayloadAction<number>) => {
-    //   state.value += action.payload
-    // },
+    selectParcel: (state, action: PayloadAction<IParcel>) => {
+      state.selectedParcel = action.payload
+    },
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { updateMapScriptStatus, updateAddressFormData, updateLatLng } =
-  appSlice.actions
+export const {
+  updateMapScriptStatus,
+  updateAddressFormData,
+  updateLatLng,
+  selectParcel,
+} = appSlice.actions
 
 export default appSlice.reducer
