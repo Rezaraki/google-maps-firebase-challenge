@@ -1,25 +1,28 @@
 import { Button } from '@mui/material'
 import { TransportOptionsContainer } from '../css/TransportOptionsContainer'
-import { useAppDispatch, useAppSelector } from '../services/hooks/redux'
+import { useAppDispatch, useAppSelector } from '../services/redux/hooks'
 import drivingimg from '../assets/imgs/motor.png'
 import cyclingimg from '../assets/imgs/bike.png'
 import walkingimg from '../assets/imgs/walk.png'
 import { TVehicleTypes } from '../types'
-import { selectTransportOption } from '../services/appSlice'
+import { selectTransportOption } from '../services/redux/appSlice'
+
+const COMPONENT_DATA = [
+  { name: 'driving', img: drivingimg },
+  { name: 'cycling', img: cyclingimg },
+  { name: 'walking', img: walkingimg },
+] as const
 
 export const TransportOptions = () => {
   const { pricingData, selectedTransportOption } = useAppSelector(
     (state) => state.app,
   )
   const dispatch = useAppDispatch()
-  const COMPONENT_DATA = [
-    { name: 'driving', img: drivingimg },
-    { name: 'cycling', img: cyclingimg },
-    { name: 'walking', img: walkingimg },
-  ] as const
+
   function handleOptionSelect(vehicleName: TVehicleTypes) {
     dispatch(selectTransportOption(vehicleName))
   }
+
   return (
     <TransportOptionsContainer>
       <h2>Transport Options</h2>

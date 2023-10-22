@@ -1,17 +1,12 @@
 import { Button, TextField } from '@mui/material'
 import { Formik, Field, Form, ErrorMessage } from 'formik'
-
 import * as yup from 'yup'
-
-import { useAppSelector } from '../services/hooks/redux'
+import { useAppSelector } from '../services/redux/hooks'
 import { AddressSelect } from './AddressSelect'
 import { AddressFormContainer } from '../css/AddressFormContainer'
+import { IAddressFormProps } from '../types'
 
-export const AddressForm = ({
-  addressType,
-}: {
-  addressType: 'origin' | 'destination'
-}) => {
+export const AddressForm = ({ addressType }: IAddressFormProps) => {
   const initialValue = {
     name: '',
     address: '',

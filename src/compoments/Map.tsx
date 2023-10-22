@@ -1,6 +1,5 @@
 import origin from '../assets/imgs/origin_pin.png'
 import destination from '../assets/imgs/destination_pin.png'
-import styled from '@emotion/styled'
 import {
   GoogleMap,
   Marker,
@@ -10,12 +9,12 @@ import {
 } from '@react-google-maps/api'
 
 import { useEffect, useMemo, useRef } from 'react'
-import { useAppDispatch, useAppSelector } from '../services/hooks/redux'
-import { updateMapScriptStatus } from '../services/appSlice'
+import { useAppDispatch, useAppSelector } from '../services/redux/hooks'
+import { updateMapScriptStatus } from '../services/redux/appSlice'
 import { getMiddlePosition } from '../services/getMiddlePosition'
-import { NonNullableFields } from '../types'
+import { ILatLng, NonNullableFields } from '../types'
 import { MapContainer } from '../css/MapContainer'
-import Spinner from './Spinner'
+import { bringMarkersToView } from '../services/map.services'
 
 const libraries: Libraries = ['places']
 const polyLineOptions = {
@@ -47,6 +46,13 @@ export default function Map() {
   const { originFormData, destinationFormData } = useAppSelector(
     (state) => state.app,
   )
+  const { lat: originlat, lng: originLng } = originFormData.address
+  const { lat: deslat, lng: desLng } = destinationFormData.address
+
+  const originPosition = { lat: originlat ?? NaN, lng: originLng ?? NaN }
+  const destinationPosition = { lat: deslat ?? NaN, lng: desLng ?? NaN }
+
+  const bothSelected = !!(originlat && originLng && deslat && desLng)
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_MAP_KEY,
@@ -55,13 +61,6 @@ export default function Map() {
     region: 'au',
   })
 
-  const { lat: originlat, lng: originLng } = originFormData.address
-  const { lat: deslat, lng: desLng } = destinationFormData.address
-
-  const originPosition = { lat: originlat ?? NaN, lng: originLng ?? NaN }
-  const destinationPosition = { lat: deslat ?? NaN, lng: desLng ?? NaN }
-
-  const bothSelected = !!(originlat && originLng && deslat && desLng)
   const center = useMemo(() => {
     if (bothSelected) {
       const middlePosition = getMiddlePosition(
@@ -76,12 +75,9 @@ export default function Map() {
     return { lat: -37.8136, lng: 144.9631 }
   }, [originlat, deslat])
 
-  const path: {
-    lat: number
-    lng: number
-  }[] = [
-    { lat: originlat, lng: originLng },
-    { lat: deslat, lng: desLng },
+  const path: ILatLng[] = [
+    { lat: originlat!, lng: originLng! },
+    { lat: deslat!, lng: desLng! },
   ]
 
   const mapRef = useRef<null | google.maps.Map>(null)
@@ -89,16 +85,10 @@ export default function Map() {
     dispatch(updateMapScriptStatus())
     mapRef.current = map
   }
-  useEffect(() => {
-    if (!mapRef.current) return
-    //bring both markers to view
-    if (bothSelected) {
-      const bounds = new window.google.maps.LatLngBounds()
-      bounds.extend(originPosition)
-      bounds.extend(destinationPosition)
 
-      mapRef.current.fitBounds(bounds)
-    }
+  useEffect(() => {
+    if (bothSelected)
+      bringMarkersToView(mapRef, originPosition, destinationPosition)
   }, [originlat, deslat])
 
   return (

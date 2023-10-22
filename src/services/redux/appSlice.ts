@@ -6,43 +6,8 @@ import {
   TAddressType,
   TPricingData,
   TVehicleTypes,
-} from '../types'
-
-export interface CounterState {
-  mapScriptLoaded: boolean
-  originFormData: IAddressForm
-  destinationFormData: IAddressForm
-  selectedParcel: IParcel | null
-  pricingData: TPricingData | null
-  selectedTransportOption: TVehicleTypes
-}
-
-const initialState: CounterState = {
-  mapScriptLoaded: false,
-  originFormData: {
-    name: '',
-    address: {
-      text: '',
-      lat: null,
-      lng: null,
-    },
-    moreDetails: '',
-    phoneNumber: '',
-  },
-  destinationFormData: {
-    name: '',
-    address: {
-      text: '',
-      lat: null,
-      lng: null,
-    },
-    moreDetails: '',
-    phoneNumber: '',
-  },
-  selectedParcel: null,
-  pricingData: null,
-  selectedTransportOption: null,
-}
+} from '../../types'
+import { initialState } from './initialState'
 
 export const appSlice = createSlice({
   name: 'app',

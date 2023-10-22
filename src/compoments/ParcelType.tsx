@@ -1,76 +1,33 @@
 import { Button } from '@mui/material'
-import { collection, getDocs } from 'firebase/firestore'
-import { getFunctions, httpsCallable } from 'firebase/functions'
-import { useAppDispatch, useAppSelector } from '../services/hooks/redux'
-import {
-  getStorage,
-  ref,
-  getDownloadURL,
-  FirebaseStorage,
-} from 'firebase/storage'
+
+import { useAppDispatch, useAppSelector } from '../services/redux/hooks'
+
 import { useEffect, useState } from 'react'
 import { ParcelTypeContainer } from '../css/ParcelTypeContainer'
-import { db } from '../services/firebase'
-import { IParcel, TPricingData } from '../types'
-import { selectParcel, updatePricingData } from '../services/appSlice'
+
+import { IParcel, IPricingBodyData, TPricingData } from '../types'
+import { selectParcel, updatePricingData } from '../services/redux/appSlice'
+import {
+  fetchParcelData,
+  getTransportOptions,
+  updateParcelsImgUrl,
+} from '../services/ParcelType.services'
 
 export const ParcelType = () => {
   const [parcels, setParcels] = useState<IParcel[] | null>(null)
   const { selectedParcel, originFormData, destinationFormData } =
     useAppSelector((state) => state.app)
+
   const dispatch = useAppDispatch()
-  async function getImageurlPromise(
-    storage: FirebaseStorage,
-    imagePath: string,
-  ) {
-    const imageRef = ref(storage, imagePath)
-    const urlPromise = getDownloadURL(imageRef)
-    return urlPromise
-  }
 
-  async function getParcelsImgUrls(parcels: IParcel[]) {
-    const storage = getStorage()
-    const imgUrlPromises = parcels.map(async (parcel) => {
-      return getImageurlPromise(storage, parcel.parcel_img_url)
-    })
-    const allImgsPromise = Promise.allSettled(imgUrlPromises)
-    return allImgsPromise
-  }
-
-  async function updateParcelsImgUrl(
-    parcels: IParcel[],
-    updateParcelFunc: (value: IParcel[] | null) => void,
-  ) {
-    try {
-      const pracelImgsArr = await getParcelsImgUrls(parcels)
-
-      const imgUpdatedParcels = parcels.map((parcel, i) => {
-        if (pracelImgsArr[i].status === 'fulfilled')
-          parcel.firebase_fetched_img_url = (
-            pracelImgsArr[i] as PromiseFulfilledResult<string>
-          ).value
-        return parcel
-      })
-      updateParcelFunc(imgUpdatedParcels)
-    } catch (error) {
-      console.error(error)
-    }
+  async function fetchData() {
+    const fetchedParcels = await fetchParcelData()
+    setParcels(fetchedParcels)
+    updateParcelsImgUrl(fetchedParcels, setParcels)
   }
 
   useEffect(() => {
-    const fetchParcelData = async () => {
-      const data = await getDocs(collection(db, 'bearerParcels'))
-
-      // convert to a plain JavaScript object
-      const parcels = data.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      })) as IParcel[]
-      updateParcelsImgUrl(parcels, setParcels)
-      setParcels(parcels)
-    }
-
-    fetchParcelData()
+    fetchData()
   }, [])
 
   function handleParcelClick(id: string) {
@@ -79,35 +36,27 @@ export const ParcelType = () => {
   }
 
   async function handleConfirmClick() {
-    const functions = getFunctions()
-    const pricingFunction = httpsCallable(functions, 'pricing')
-
     const {
       id,
       parcel_img_url,
       firebase_fetched_img_url,
+
       ...neededParcelData
     } = selectedParcel ?? {}
 
-    const pricingBodyData = {
+    const pricingBodyData: IPricingBodyData = {
       origin: {
-        lat: originFormData.address.lat,
-        lng: originFormData.address.lng,
+        lat: originFormData.address.lat!,
+        lng: originFormData.address.lng!,
       },
       destination: {
-        lat: destinationFormData.address.lat,
-        lng: destinationFormData.address.lng,
+        lat: destinationFormData.address.lat!,
+        lng: destinationFormData.address.lng!,
       },
-      ...neededParcelData,
+      ...(neededParcelData as IParcel),
     }
-    try {
-      const result = await pricingFunction(pricingBodyData)
-
-      const data = result.data
-      dispatch(updatePricingData(data as TPricingData))
-    } catch (error) {
-      console.error(`Error calling pricing function: ${error}`)
-    }
+    const pricingData = await getTransportOptions(pricingBodyData)
+    dispatch(updatePricingData(pricingData as TPricingData))
   }
   return (
     <ParcelTypeContainer>
