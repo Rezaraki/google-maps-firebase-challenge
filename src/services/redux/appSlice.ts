@@ -8,6 +8,7 @@ import {
   TVehicleTypes,
 } from '../../types'
 import { initialState } from './initialState'
+import { ADDRESS_TYPE } from '../../constatnts'
 
 export const appSlice = createSlice({
   name: 'app',
@@ -20,9 +21,9 @@ export const appSlice = createSlice({
       state,
       action: PayloadAction<{ type: TAddressType; data: IAddressForm }>,
     ) => {
-      if (action.payload.type === 'origin')
+      if (action.payload.type === ADDRESS_TYPE.origin)
         state.originFormData = action.payload.data
-      if (action.payload.type === 'destination')
+      if (action.payload.type === ADDRESS_TYPE.destination)
         state.destinationFormData = action.payload.data
     },
     updateLatLng: (
@@ -32,11 +33,11 @@ export const appSlice = createSlice({
         data: { lat: number; lng: number }
       }>,
     ) => {
-      if (action.payload.type === 'origin') {
+      if (action.payload.type === ADDRESS_TYPE.origin) {
         state.originFormData.address.lat = action.payload.data.lat
         state.originFormData.address.lng = action.payload.data.lng
       }
-      if (action.payload.type === 'destination') {
+      if (action.payload.type === ADDRESS_TYPE.destination) {
         state.destinationFormData.address.lat = action.payload.data.lat
         state.destinationFormData.address.lng = action.payload.data.lng
       }
