@@ -11,7 +11,6 @@ import {
 import { useEffect, useMemo, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../services/redux/hooks'
 import { updateMapScriptStatus } from '../services/redux/appSlice'
-import { getMiddlePosition } from '../services/getMiddlePosition'
 import { ILatLng, NonNullableFields } from '../types'
 import { MapContainer } from '../css/MapContainer'
 import { bringMarkersToView } from '../services/map.services'
@@ -62,13 +61,6 @@ export default function Map() {
   })
 
   const center = useMemo(() => {
-    if (bothSelected) {
-      const middlePosition = getMiddlePosition(
-        originPosition,
-        destinationPosition,
-      )
-      return middlePosition
-    }
     if (originlat && originLng) {
       return originPosition
     }
