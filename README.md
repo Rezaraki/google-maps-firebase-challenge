@@ -31,3 +31,5 @@ Here are some additional features that are planned for future development:
 - **Style Tweaks**: Some style adjustments will be made to enhance the user interface and experience.
 
 Please note that this is a high-level overview of the application's functionality. For more detailed information about each feature, please refer to the source code and comments within.
+##Live
+Live at https://bearer-challenge.netlify.app/
